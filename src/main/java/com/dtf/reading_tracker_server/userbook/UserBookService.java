@@ -11,6 +11,6 @@ public interface UserBookService {
     UserBookResponse create(Long userId, UserBookRequest request);
     void delete(Long userId, Long bookId);
     UserBookResponse updateStatus(Long userId, Long bookId, String status);
-    UserBookResponse updateCurrentPage(Long userId, Long bookId, int currentPage);
-    UserBookResponse updateRating(Long userId, Long bookId, int rating);
+    UserBookResponse updateCurrentPage(Long userId, Long bookId, Integer currentPage);
+    UserBookResponse updateRating(Long userId, Long bookId, Integer rating);
 }
