@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserContext userContext;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal Jwt jwt) {
-        String auth0id = jwt.getSubject();
-        return ResponseEntity.ok(userService.getUserByAuth0Id(auth0id));
+        final User user = userContext.getCurrentUser(jwt);
+        return ResponseEntity.ok(UserResponse.from(user));
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal Jwt jwt) {
-        String auth0id = jwt.getSubject();
-        userService.deleteUserByAuth0Id(auth0id);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt) {
+        final Long userId = userContext.getCurrentUserId(jwt);
+        userService.deleteUser(userId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
