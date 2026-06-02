@@ -39,12 +39,12 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
-    public UserBookResponse updateCurrentPage(Long userId, Long bookId, int currentPage) {
+    public UserBookResponse updateCurrentPage(Long userId, Long bookId, Integer currentPage) {
         return null;
     }
 
     @Override
-    public UserBookResponse updateRating(Long userId, Long bookId, int rating) {
+    public UserBookResponse updateRating(Long userId, Long bookId, Integer rating) {
         return null;
     }
 }
