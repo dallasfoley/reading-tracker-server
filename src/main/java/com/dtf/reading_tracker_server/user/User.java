@@ -21,13 +21,16 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private  String authId;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role = Role.USER;
+    private Role role;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
