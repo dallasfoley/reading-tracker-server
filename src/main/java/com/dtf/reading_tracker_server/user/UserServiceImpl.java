@@ -12,17 +12,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserResponse getUser(Long id) {
-        User user = userRepository.findById(id)
+    public UserResponse getUserByAuth0Id(String auth0id) {
+        User user = userRepository.findByAuthId(auth0id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return UserResponse.from(user);
     }
 
     @Override
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
+    public void deleteUserByAuth0Id(String auth0id) {
+        if (!userRepository.existsByAuthId(auth0id)) {
             throw new ResourceNotFoundException("User not found");
         }
-        userRepository.deleteById(id);
+        userRepository.deleteByAuthId(auth0id);
     }
 }
