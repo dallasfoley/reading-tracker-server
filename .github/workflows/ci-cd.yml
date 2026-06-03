@@ -20,7 +20,7 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: ./mvnw verify
+        run: chmod +x mvnw && ./mvnw verify
         env:
             # Testcontainers spins up its own Postgres, so these are just
             # placeholders to satisfy Spring's startup property binding.
