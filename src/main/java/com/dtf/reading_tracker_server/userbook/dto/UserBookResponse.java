@@ -6,8 +6,8 @@ import com.dtf.reading_tracker_server.userbook.enums.ReadingStatus;
 public record UserBookResponse(
         Long id,
         ReadingStatus status,
-        int userRating,
-        int currentPage,
+        Integer userRating,
+        Integer currentPage,
         Long bookId,
         String bookTitle,
         String bookAuthor,
