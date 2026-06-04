@@ -94,7 +94,7 @@ public class BookServiceImpl implements BookService {
     OpenLibrarySearchResponse response = openLibraryRestClient.get()
             .uri(uriBuilder -> uriBuilder
                     .path("/search.json")
-                    .queryParam("q", openLibraryKey)
+                    .queryParam("q", "key:" + openLibraryKey)
                     .queryParam("limit", 1)
                     .queryParam("fields", "key,title,author_name,first_publish_year,number_of_pages_median,cover_i,subject")
                     .build())
