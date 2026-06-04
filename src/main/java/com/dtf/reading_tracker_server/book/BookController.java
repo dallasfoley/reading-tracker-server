@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
@@ -15,13 +17,13 @@ public class BookController {
 
   private final BookService bookService;
 
-  @GetMapping("/search?q={query}")
-  public ResponseEntity<BookResponse> search(@AuthenticationPrincipal Jwt jwt, @RequestParam String query) {
+  @GetMapping("/search")
+  public ResponseEntity<List<BookResponse>> search(@RequestParam String query) {
     return ResponseEntity.ok(bookService.search(query));
   }
 
   @GetMapping("/{bookId}")
-  public ResponseEntity<BookResponse> get(@AuthenticationPrincipal Jwt jwt, @PathVariable Long bookId) {
+  public ResponseEntity<BookResponse> get(@PathVariable Long bookId) {
     return ResponseEntity.ok(bookService.get(bookId));
   }
 

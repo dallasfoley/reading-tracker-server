@@ -25,22 +25,25 @@ public class Book {
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserBook> userBooks = new ArrayList<>();
 
+  @Column(unique = true)
+  private String openLibraryKey;
+
   @Column(nullable = false)
   private String title;
 
   @Column(nullable = false)
   private String author;
 
-  @Column(nullable = false)
+  @Column
   private Integer yearPublished;
 
-  @Column(nullable = false)
+  @Column
   private String genre;
 
-  @Column(nullable = false)
+  @Column
   private Integer pageCount;
 
-  @Column(nullable = false)
+  @Column
   private String coverUrl;
 
   @Column(length = 2000)

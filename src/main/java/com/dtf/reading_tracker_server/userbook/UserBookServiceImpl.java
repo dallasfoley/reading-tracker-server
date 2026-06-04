@@ -2,6 +2,7 @@ package com.dtf.reading_tracker_server.userbook;
 
 import com.dtf.reading_tracker_server.book.Book;
 import com.dtf.reading_tracker_server.book.BookRepository;
+import com.dtf.reading_tracker_server.book.BookService;
 import com.dtf.reading_tracker_server.exception.ConflictException;
 import com.dtf.reading_tracker_server.exception.ResourceNotFoundException;
 import com.dtf.reading_tracker_server.user.User;
@@ -22,6 +23,7 @@ public class UserBookServiceImpl implements UserBookService{
     private final UserBookRepository userBookRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final BookService bookService;
 
     @Override
     public List<UserBookResponse> getAllByUser(Long userId) {
@@ -42,9 +44,9 @@ public class UserBookServiceImpl implements UserBookService{
     public UserBookResponse create(Long userId, UserBookRequest request) {
 
         final User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        final Book book = bookRepository.findById(request.bookId()).orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+        final Book book = resolveBook(request);
 
-        if (!userBookRepository.existsByUserIdAndBookId(userId, request.bookId())) {
+        if (userBookRepository.existsByUserIdAndBookId(userId, book.getId())) {
             throw new ConflictException("Book already in user's library");
         }
 
@@ -57,6 +59,18 @@ public class UserBookServiceImpl implements UserBookService{
                 .build();
 
         return UserBookResponse.from(userBookRepository.save(userBook));
+    }
+
+    private Book resolveBook(UserBookRequest request) {
+        if (request.bookId() != null) {
+            return bookRepository.findById(request.bookId()).orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+        }
+
+        if (request.openLibraryKey() != null && !request.openLibraryKey().isBlank()) {
+            return bookService.findOrCreateFromOpenLibrary(request.openLibraryKey());
+        }
+
+        throw new ResourceNotFoundException("bookId or openLibraryKey is required");
     }
 
     @Override
