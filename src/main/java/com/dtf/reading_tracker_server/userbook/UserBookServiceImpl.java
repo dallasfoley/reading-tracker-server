@@ -3,8 +3,8 @@ package com.dtf.reading_tracker_server.userbook;
 import com.dtf.reading_tracker_server.book.Book;
 import com.dtf.reading_tracker_server.book.BookRepository;
 import com.dtf.reading_tracker_server.book.BookService;
-import com.dtf.reading_tracker_server.exception.ConflictException;
-import com.dtf.reading_tracker_server.exception.ResourceNotFoundException;
+import com.dtf.reading_tracker_server.shared.exception.ConflictException;
+import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
 import com.dtf.reading_tracker_server.user.User;
 import com.dtf.reading_tracker_server.user.UserRepository;
 import com.dtf.reading_tracker_server.userbook.dto.UserBookRequest;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

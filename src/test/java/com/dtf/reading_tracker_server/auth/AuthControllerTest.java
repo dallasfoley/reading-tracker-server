@@ -1,7 +1,7 @@
 package com.dtf.reading_tracker_server.auth;
 
-import com.dtf.reading_tracker_server.config.CorsConfig;
-import com.dtf.reading_tracker_server.config.SecurityConfig;
+import com.dtf.reading_tracker_server.shared.config.CorsConfig;
+import com.dtf.reading_tracker_server.shared.config.SecurityConfig;
 import com.dtf.reading_tracker_server.user.dto.UserResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.dtf.reading_tracker_server.book;
 
 import com.dtf.reading_tracker_server.book.dto.BookResponse;
-import com.dtf.reading_tracker_server.exception.ResourceNotFoundException;
+import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

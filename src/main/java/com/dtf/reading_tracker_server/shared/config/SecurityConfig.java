@@ -1,4 +1,4 @@
-package com.dtf.reading_tracker_server.config;
+package com.dtf.reading_tracker_server.shared.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

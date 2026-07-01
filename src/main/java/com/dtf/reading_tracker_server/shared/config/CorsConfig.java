@@ -1,4 +1,4 @@
-package com.dtf.reading_tracker_server.config;
+package com.dtf.reading_tracker_server.shared.config;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +21,7 @@ public class CorsConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("WWW-Authenticate"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

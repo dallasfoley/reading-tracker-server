@@ -1,4 +1,4 @@
-package com.dtf.reading_tracker_server.exception;
+package com.dtf.reading_tracker_server.shared.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

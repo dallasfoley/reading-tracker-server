@@ -1,8 +1,8 @@
 package com.dtf.reading_tracker_server.book;
 
 import com.dtf.reading_tracker_server.book.dto.BookResponse;
-import com.dtf.reading_tracker_server.config.CorsConfig;
-import com.dtf.reading_tracker_server.config.SecurityConfig;
+import com.dtf.reading_tracker_server.shared.config.CorsConfig;
+import com.dtf.reading_tracker_server.shared.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

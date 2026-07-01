@@ -49,3 +49,20 @@ management:
       mode: full    # expose git commit SHA, branch in /info
     build:
       enabled: true # expose Maven/Gradle build metadata
+  opentelemetry:
+    metrics:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/metrics
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/logs
+
+open-library:
+  base-url: https://openlibrary.org
+
