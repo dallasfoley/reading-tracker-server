@@ -1,6 +1,6 @@
 package com.dtf.reading_tracker_server.user;
 
-import com.dtf.reading_tracker_server.exception.ResourceNotFoundException;
+import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
 import com.dtf.reading_tracker_server.user.dto.UserResponse;
 import com.dtf.reading_tracker_server.user.enums.Role;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import com.dtf.reading_tracker_server.book.dto.BookResponse;
 import com.dtf.reading_tracker_server.book.dto.OpenLibrarySearchDoc;
 import com.dtf.reading_tracker_server.book.dto.OpenLibrarySearchResponse;
 import com.dtf.reading_tracker_server.book.dto.OpenLibraryWorkResponse;
-import com.dtf.reading_tracker_server.exception.ResourceNotFoundException;
+import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestClient;

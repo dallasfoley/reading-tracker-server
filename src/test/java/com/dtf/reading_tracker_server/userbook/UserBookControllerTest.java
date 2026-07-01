@@ -1,9 +1,9 @@
 package com.dtf.reading_tracker_server.userbook;
 
-import com.dtf.reading_tracker_server.config.CorsConfig;
-import com.dtf.reading_tracker_server.config.SecurityConfig;
-import com.dtf.reading_tracker_server.exception.ConflictException;
-import com.dtf.reading_tracker_server.exception.GlobalExceptionHandler;
+import com.dtf.reading_tracker_server.shared.config.CorsConfig;
+import com.dtf.reading_tracker_server.shared.config.SecurityConfig;
+import com.dtf.reading_tracker_server.shared.exception.ConflictException;
+import com.dtf.reading_tracker_server.shared.exception.GlobalExceptionHandler;
 import com.dtf.reading_tracker_server.user.UserContext;
 import com.dtf.reading_tracker_server.userbook.dto.UserBookRequest;
 import com.dtf.reading_tracker_server.userbook.dto.UserBookResponse;

@@ -7,3 +7,10 @@ services:
       - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD}'
     ports:
       - '5433:5432'
+  otel-lgtm:
+    image: grafana/otel-lgtm
+    ports:
+      - "4000:4000"   # Grafna
+      - "4318:4318"   # OTLP HTTP
+      - "4317:4317"   # OTLP gRPC
+
