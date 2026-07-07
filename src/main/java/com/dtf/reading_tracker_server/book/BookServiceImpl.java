@@ -4,10 +4,15 @@ import com.dtf.reading_tracker_server.book.dto.BookResponse;
 import com.dtf.reading_tracker_server.book.dto.OpenLibrarySearchDoc;
 import com.dtf.reading_tracker_server.book.dto.OpenLibrarySearchResponse;
 import com.dtf.reading_tracker_server.book.dto.OpenLibraryWorkResponse;
+import com.dtf.reading_tracker_server.shared.cache.CacheNames;
+import com.dtf.reading_tracker_server.shared.exception.ExternalServiceException;
+import com.dtf.reading_tracker_server.shared.exception.InvalidRequestException;
 import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,16 +27,26 @@ public class BookServiceImpl implements BookService {
   private final RestClient openLibraryRestClient;
 
   @Override
+  @Cacheable(cacheNames = CacheNames.OPEN_LIBRARY_SEARCH, key = "#query == null ? '' : #query.trim().toLowerCase()", condition = "#query != null && !#query.isBlank()")
   public List<BookResponse> search(String query) {
-    OpenLibrarySearchResponse response = openLibraryRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                    .path("/search.json")
-                    .queryParam("q", query)
-                    .queryParam("limit", 10)
-                    .queryParam("fields", "key,title,author_name,first_publish_year,number_of_pages_median,cover_i,subject")
-                    .build())
-            .retrieve()
-            .body(OpenLibrarySearchResponse.class);
+    if (query == null || query.isBlank()) {
+      throw new InvalidRequestException("query is required");
+    }
+
+    OpenLibrarySearchResponse response;
+    try {
+      response = openLibraryRestClient.get()
+              .uri(uriBuilder -> uriBuilder
+                      .path("/search.json")
+                      .queryParam("q", query.trim())
+                      .queryParam("limit", 10)
+                      .queryParam("fields", "key,title,author_name,first_publish_year,number_of_pages_median,cover_i,subject")
+                      .build())
+              .retrieve()
+              .body(OpenLibrarySearchResponse.class);
+    } catch (RestClientException ex) {
+      throw new ExternalServiceException("Unable to search OpenLibrary", ex);
+    }
 
     return Optional.ofNullable(response)
             .map(OpenLibrarySearchResponse::docs)
@@ -42,7 +57,12 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
+  @Cacheable(cacheNames = CacheNames.BOOKS_BY_ID, key = "#id")
   public BookResponse get(Long id) {
+    if (id == null || id <= 0) {
+      throw new InvalidRequestException("book id must be positive");
+    }
+
     return bookRepository.findById(id)
             .map(BookResponse::from)
             .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
@@ -73,10 +93,15 @@ public class BookServiceImpl implements BookService {
   private Book fetchBookFromOpenLibrary(String openLibraryKey) {
     OpenLibrarySearchDoc searchDoc = findSearchDocByKey(openLibraryKey)
             .orElseThrow(() -> new ResourceNotFoundException("OpenLibrary book not found"));
-    OpenLibraryWorkResponse work = openLibraryRestClient.get()
-            .uri(openLibraryKey + ".json")
-            .retrieve()
-            .body(OpenLibraryWorkResponse.class);
+    OpenLibraryWorkResponse work;
+    try {
+      work = openLibraryRestClient.get()
+              .uri(openLibraryKey + ".json")
+              .retrieve()
+              .body(OpenLibraryWorkResponse.class);
+    } catch (RestClientException ex) {
+      throw new ExternalServiceException("Unable to fetch OpenLibrary book details", ex);
+    }
 
     return Book.builder()
             .openLibraryKey(openLibraryKey)
@@ -91,15 +116,20 @@ public class BookServiceImpl implements BookService {
   }
 
   private Optional<OpenLibrarySearchDoc> findSearchDocByKey(String openLibraryKey) {
-    OpenLibrarySearchResponse response = openLibraryRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                    .path("/search.json")
-                    .queryParam("q", "key:" + openLibraryKey)
-                    .queryParam("limit", 1)
-                    .queryParam("fields", "key,title,author_name,first_publish_year,number_of_pages_median,cover_i,subject")
-                    .build())
-            .retrieve()
-            .body(OpenLibrarySearchResponse.class);
+    OpenLibrarySearchResponse response;
+    try {
+      response = openLibraryRestClient.get()
+              .uri(uriBuilder -> uriBuilder
+                      .path("/search.json")
+                      .queryParam("q", "key:" + openLibraryKey)
+                      .queryParam("limit", 1)
+                      .queryParam("fields", "key,title,author_name,first_publish_year,number_of_pages_median,cover_i,subject")
+                      .build())
+              .retrieve()
+              .body(OpenLibrarySearchResponse.class);
+    } catch (RestClientException ex) {
+      throw new ExternalServiceException("Unable to search OpenLibrary by key", ex);
+    }
 
     return Optional.ofNullable(response)
             .map(OpenLibrarySearchResponse::docs)

@@ -103,6 +103,22 @@ class UserBookControllerTest {
     }
 
     @Test
+    void addBookReturnsBadRequestForInvalidPayload() throws Exception {
+        mockMvc.perform(post("/api/userbooks")
+                        .with(jwt())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "NOT_STARTED",
+                                  "currentPage": -1
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Request validation failed"))
+                .andExpect(jsonPath("$.fieldErrors").isArray());
+    }
+
+    @Test
     void getMyBooksReturnsCurrentUsersLibrary() throws Exception {
         when(userContext.getCurrentUserId(any())).thenReturn(1L);
         when(userBookService.getAllByUser(1L)).thenReturn(List.of(response(100L, ReadingStatus.IN_PROGRESS)));
