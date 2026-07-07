@@ -4,6 +4,7 @@ import com.dtf.reading_tracker_server.book.Book;
 import com.dtf.reading_tracker_server.book.BookRepository;
 import com.dtf.reading_tracker_server.book.BookService;
 import com.dtf.reading_tracker_server.shared.exception.ConflictException;
+import com.dtf.reading_tracker_server.shared.exception.InvalidRequestException;
 import com.dtf.reading_tracker_server.shared.exception.ResourceNotFoundException;
 import com.dtf.reading_tracker_server.user.User;
 import com.dtf.reading_tracker_server.user.UserRepository;
@@ -122,8 +123,6 @@ class UserBookServiceTest {
 
     @Test
     void createThrowsWhenRequestHasNoBookIdentifier() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user(1L)));
-
         assertThatThrownBy(() -> userBookService.create(1L, new UserBookRequest(
                 null,
                 null,
@@ -131,7 +130,7 @@ class UserBookServiceTest {
                 null,
                 0
         )))
-                .isInstanceOf(ResourceNotFoundException.class)
+                .isInstanceOf(InvalidRequestException.class)
                 .hasMessage("bookId or openLibraryKey is required");
         verify(userBookRepository, never()).save(any(UserBook.class));
     }
@@ -156,6 +155,17 @@ class UserBookServiceTest {
 
         assertThat(response.status()).isEqualTo(ReadingStatus.COMPLETED);
         assertThat(userBook.getStatus()).isEqualTo(ReadingStatus.COMPLETED);
+    }
+
+    @Test
+    void updateStatusThrowsBadRequestForInvalidStatus() {
+        UserBook userBook = userBook(100L);
+        when(userBookRepository.findByUserIdAndBookId(1L, 10L)).thenReturn(Optional.of(userBook));
+
+        assertThatThrownBy(() -> userBookService.updateStatus(1L, 10L, "DONE_READING"))
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessage("Invalid reading status: DONE_READING");
+        verify(userBookRepository, never()).save(any(UserBook.class));
     }
 
     @Test

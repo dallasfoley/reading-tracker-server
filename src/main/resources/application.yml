@@ -1,6 +1,8 @@
 spring:
   application:
     name: reading-tracker-server
+  cache:
+    type: redis
   docker:
     compose:
       enabled: false
@@ -23,6 +25,10 @@ spring:
     properties:
       hibernate:
         "[format_sql]": true
+  redis:
+    url: ${REDIS_URL}
+    username: ${REDIS_USER}
+    password: ${REDIS_PASSWORD}
 
 server:
   port: 8080

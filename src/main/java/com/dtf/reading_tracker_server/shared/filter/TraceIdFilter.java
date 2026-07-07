@@ -8,17 +8,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 class TraceIdFilter extends OncePerRequestFilter {
 
-    private final Tracer tracer;
+    private final ObjectProvider<Tracer> tracer;
 
-    TraceIdFilter(Tracer tracer) {
+    TraceIdFilter(ObjectProvider<Tracer> tracer) {
         this.tracer = tracer;
     }
 
@@ -32,8 +34,11 @@ class TraceIdFilter extends OncePerRequestFilter {
     }
 
     private @Nullable String getTraceId() {
-        TraceContext context = this.tracer.currentTraceContext().context();
-        return context != null ? context.traceId() : null;
+        return Optional.ofNullable(this.tracer.getIfAvailable())
+                .map(Tracer::currentTraceContext)
+                .map(currentTraceContext -> currentTraceContext.context())
+                .map(TraceContext::traceId)
+                .orElse(null);
     }
 
 }
