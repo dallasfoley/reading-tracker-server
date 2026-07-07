@@ -1,0 +1,35 @@
+For local dev:
+.\mvnw.cmd clean package jib:dockerBuild -Djib.to.image=myapp:dev
+docker compose -f docker-compose.dev.yaml up -d
+That builds your Spring Boot app into a local Docker image named myapp:dev, which matches your docker-compose.dev.yaml.
+For prod:
+.\mvnw.cmd clean verify jib:dockerBuild -Djib.to.image=myapp:prod
+docker compose -f docker-compose.prod.yaml up -d
+That matches your current prod compose file, which expects myapp:prod.
+The more manageable long-term setup is to avoid separate “dev image” and “prod image” builds. Build one immutable image, then choose dev/prod with environment variables:
+.\mvnw.cmd clean verify jib:dockerBuild -Djib.to.image=reading-tracker-server:0.0.1
+Then in compose:
+services:
+  app1:
+    image: reading-tracker-server:0.0.1
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+For real deployment, use jib:build instead of jib:dockerBuild:
+.\mvnw.cmd clean verify jib:build -Djib.to.image=ghcr.io/YOUR_USER/reading-tracker-server:0.0.1
+jib:dockerBuild builds into your local Docker daemon.
+jib:build pushes straight to a registry, which is better for prod servers/CI.
+
+mvn/docker startup commands:
+Run all tests: ./mvnw.cmd test
+Unit tests only: ./mvnw.cmd test -Dtest='!*IntegrationTest'
+Build image (with tests): ./mvnw.cmd clean package jib:buildTar && docker load --input target/jib-image.tar
+Build image (skip tests, fast): ./mvnw.cmd clean package -DskipTests jib:buildTar && docker load --input target/jib-image.tar
+Run full stack: docker compose up
+Restart just app after rebuild: docker compose up -d --no-deps appTail app logsdocker compose logs -f app
+
+startup scripts:
+bash scripts/dev-build.sh --skip-tests
+Build, load into Docker, and start the dev stack:
+bash scripts/dev-build.sh --skip-tests --up
+Override the image name if needed:
+bash scripts/dev-build.sh --skip-tests --image myapp:test

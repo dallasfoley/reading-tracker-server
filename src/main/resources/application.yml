@@ -25,10 +25,11 @@ spring:
     properties:
       hibernate:
         "[format_sql]": true
-  redis:
-    url: ${REDIS_URL}
-    username: ${REDIS_USER}
-    password: ${REDIS_PASSWORD}
+  data:
+    redis:
+      url: ${REDIS_URL}
+      username: ${REDIS_USER}
+      password: ${REDIS_PASSWORD}
 
 server:
   port: 8080
