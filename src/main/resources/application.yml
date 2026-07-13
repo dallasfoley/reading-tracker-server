@@ -1,6 +1,9 @@
 spring:
   application:
     name: reading-tracker-server
+  threads:
+    virtual:
+      enabled: true
   cache:
     type: redis
   docker:
@@ -56,19 +59,15 @@ management:
       mode: full    # expose git commit SHA, branch in /info
     build:
       enabled: true # expose Maven/Gradle build metadata
-  opentelemetry:
+  otlp:
     metrics:
       export:
-        otlp:
-          endpoint: http://localhost:4318/v1/metrics
+        url: http://localhost:4318/v1/metrics
     tracing:
-      export:
-        otlp:
-          endpoint: http://localhost:4318/v1/traces
+      endpoint: http://localhost:4318/v1/traces
     logging:
       export:
-        otlp:
-          endpoint: http://localhost:4318/v1/logs
+        endpoint: http://localhost:4318/v1/logs
 
 open-library:
   base-url: https://openlibrary.org
