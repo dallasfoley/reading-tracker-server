@@ -10,6 +10,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.time.Duration;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class RedisConfig {
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(
                                 GenericJacksonJsonRedisSerializer.builder()
-                                        .customize(builder -> builder.findAndAddModules())
+                                        .customize(MapperBuilder::findAndAddModules)
                                         .build()
                         )
                 )
