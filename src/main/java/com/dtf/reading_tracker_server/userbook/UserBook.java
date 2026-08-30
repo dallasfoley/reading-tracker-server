@@ -14,7 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_books")
+@Table(name = "user_books", uniqueConstraints =
+        @UniqueConstraint(name = "uk_user_books_user_book", columnNames = {"user_id", "book_id"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,12 +26,12 @@ public class UserBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @Column(nullable = false)

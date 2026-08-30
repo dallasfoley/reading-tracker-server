@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class UserBookServiceImpl implements UserBookService{
     private final BookService bookService;
 
     @Override
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId")
     public List<UserBookResponse> getAllByUser(Long userId) {
         validatePositive(userId, "user id");
@@ -42,6 +44,7 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #bookId")
     public UserBookResponse getByUserAndBook(Long userId, Long bookId) {
         validatePositive(userId, "user id");
@@ -53,6 +56,7 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
+    @Transactional
     @Caching(
             put = @CachePut(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #result.bookId()"),
             evict = @CacheEvict(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId")
@@ -92,6 +96,7 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
+    @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId"),
             @CacheEvict(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #bookId")
@@ -100,11 +105,13 @@ public class UserBookServiceImpl implements UserBookService{
         validatePositive(userId, "user id");
         validatePositive(bookId, "book id");
 
-        final UserBook userBook = userBookRepository.findByUserIdAndBookId(userId, bookId).orElseThrow(() -> new ResourceNotFoundException("UserBook not found"));
-        userBookRepository.delete(userBook);
+        // DELETE is intentionally idempotent: a client can safely retry after a timeout.
+        userBookRepository.findByUserIdAndBookId(userId, bookId)
+                .ifPresent(userBookRepository::delete);
     }
 
     @Override
+    @Transactional
     @Caching(
             put = @CachePut(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #bookId"),
             evict = @CacheEvict(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId")
@@ -120,6 +127,7 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
+    @Transactional
     @Caching(
             put = @CachePut(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #bookId"),
             evict = @CacheEvict(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId")
@@ -138,6 +146,7 @@ public class UserBookServiceImpl implements UserBookService{
     }
 
     @Override
+    @Transactional
     @Caching(
             put = @CachePut(cacheNames = CacheNames.USER_BOOK_BY_USER_AND_BOOK, key = "#userId + ':' + #bookId"),
             evict = @CacheEvict(cacheNames = CacheNames.USER_BOOKS_BY_USER, key = "#userId")

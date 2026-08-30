@@ -76,9 +76,9 @@ public class UserBookController {
 
     // DELETE /api/userbooks/{bookId}
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive Long bookid) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive Long bookId) {
         final Long userId = userContext.getCurrentUserId(jwt);
-        userBookService.delete(userId, bookid);
+        userBookService.delete(userId, bookId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ public class BookServiceImpl implements BookService {
   private final RestClient openLibraryRestClient;
 
   @Override
+  @Transactional(readOnly = true)
   @Cacheable(cacheNames = CacheNames.OPEN_LIBRARY_SEARCH, key = "#query == null ? '' : #query.trim().toLowerCase()", condition = "#query != null && !#query.isBlank()")
   public List<BookResponse> search(String query) {
     if (query == null || query.isBlank()) {
@@ -69,6 +71,7 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
+  @Transactional
   public Book findOrCreateFromOpenLibrary(String openLibraryKey) {
     String normalizedKey = normalizeOpenLibraryKey(openLibraryKey);
 
